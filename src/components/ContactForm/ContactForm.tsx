@@ -3,6 +3,8 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import { AlternateEmail, CameraAlt, LocalPhone } from '@mui/icons-material';
 import { useState } from 'react';
 import { IUserInput } from '../../types';
+import { useAppDispatch } from '../../app/hooks';
+import { submitContact } from '../../store/contactsThunks';
 
 const initialState: IUserInput = {
   name: '',
@@ -12,6 +14,8 @@ const initialState: IUserInput = {
 };
 
 const ContactForm = () => {
+  const dispatch = useAppDispatch();
+
   const [contactForm, setContactForm] = useState<IUserInput>(initialState);
 
   const onChange = (
@@ -24,9 +28,13 @@ const ContactForm = () => {
     }));
   };
 
-  const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(contactForm);
+    try {
+      await dispatch(submitContact(contactForm))
+    }catch (e){
+      console.log("The mistake is ", e);
+    }
   };
 
   return (
@@ -92,7 +100,6 @@ const ContactForm = () => {
             <CameraAlt className="me-3" />
             <TextField
               fullWidth
-              required
               onChange={onChange}
               name="photo"
               label="Photo"
@@ -115,7 +122,7 @@ const ContactForm = () => {
           <Button type="submit" color="success" variant="contained">
             Add New Contact
           </Button>
-          <Button type="submit" color="primary" variant="contained">
+          <Button type="button" color="primary" variant="contained">
             Back to Contacts
           </Button>
         </Grid>
