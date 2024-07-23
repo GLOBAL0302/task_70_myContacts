@@ -7,7 +7,8 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle, Grid,
+  DialogTitle,
+  Grid,
   Slide,
 } from '@mui/material';
 import BadgeIcon from '@mui/icons-material/Badge';
@@ -25,27 +26,28 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ContactModal:React.FC = () => {
+const ContactModal: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch()
-  const {id} = useParams();
-  const selectedContact = useAppSelector(selectContacts).find((contact) => contact.id === id);
+  const dispatch = useAppDispatch();
+  const { id } = useParams();
+  const selectedContact = useAppSelector(selectContacts).find(
+    (contact) => contact.id === id,
+  );
 
   const handleClose = () => {
-    navigate("/")
+    navigate('/');
   };
 
-  const editContact= ()=>{
-    navigate(`/editForm/${id}`)
-  }
+  const editContact = () => {
+    navigate(`/editForm/${id}`);
+  };
 
-  const deleteContact= async ()=>{
-    if(id){
-      await dispatch(deleteContactThunk(id))
+  const deleteContact = async () => {
+    if (id) {
+      await dispatch(deleteContactThunk(id));
     }
-    navigate("/")
-  }
-
+    navigate('/');
+  };
 
   return (
     <div>
@@ -57,27 +59,38 @@ const ContactModal:React.FC = () => {
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{'Contact Information'}</DialogTitle>
-        <DialogContent>
+        <hr />
+        <DialogContent className="px-5 py-0">
           <Box component="div" className="d-flex gap-5 align-items-center">
             <img
               className="border border-5 p-2"
-              style={{ maxHeight: '200px', maxWidth: '200px' }}
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfHDhRGTty4JUK8TuWxxrGMdy7awUBC4LY0w&s"
-              alt="contactPic" />
+              style={{ maxHeight: '150px', maxWidth: '200px' }}
+              src={`${selectedContact && selectedContact.photo}`}
+              alt="contactPic"
+            />
             <Grid container spacing={1} direction="column">
-              <Grid item sx={{display: 'flex', justifyContent: 'space-between'}}>
+              <Grid
+                item
+                sx={{ display: 'flex', justifyContent: 'space-between' }}
+              >
                 <BadgeIcon className="me-3" />
                 <DialogContentText id="alert-dialog-slide-description">
                   {selectedContact && selectedContact.name}
                 </DialogContentText>
               </Grid>
-              <Grid item sx={{display: 'flex', justifyContent: 'space-between'}}>
+              <Grid
+                item
+                sx={{ display: 'flex', justifyContent: 'space-between' }}
+              >
                 <LocalPhone className="me-3" />
                 <DialogContentText id="alert-dialog-slide-description">
                   {selectedContact && selectedContact.phone}
                 </DialogContentText>
               </Grid>
-              <Grid item sx={{display: 'flex', justifyContent: 'space-between'}}>
+              <Grid
+                item
+                sx={{ display: 'flex', justifyContent: 'space-between' }}
+              >
                 <AlternateEmail className="me-3" />
                 <DialogContentText id="alert-dialog-slide-description">
                   {selectedContact && selectedContact.email}
@@ -87,8 +100,20 @@ const ContactModal:React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={()=>editContact()} color="success">Edit</Button>
-          <Button variant="outlined"  color="error" onClick={()=>deleteContact()}>Delete</Button>
+          <Button
+            variant="outlined"
+            onClick={() => editContact()}
+            color="success"
+          >
+            Edit
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => deleteContact()}
+          >
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

@@ -3,7 +3,7 @@ import { contactsReducer } from '../store/contactsSlice';
 
 export const store = configureStore({
   reducer: {
-    contacts: contactsReducer
+    contacts: contactsReducer,
   },
 });
 

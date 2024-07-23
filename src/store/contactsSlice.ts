@@ -1,6 +1,10 @@
 import { IContactState } from '../types';
-import { createSlice} from '@reduxjs/toolkit';
-import { deleteContactThunk, fetchContacts, submitContact } from './contactsThunks';
+import { createSlice } from '@reduxjs/toolkit';
+import {
+  deleteContactThunk,
+  fetchContacts,
+  submitContact,
+} from './contactsThunks';
 
 export interface IContactsState {
   contacts: IContactState[];
@@ -21,26 +25,24 @@ const initialState: IContactsState = {
 export const contactsSlice = createSlice({
   name: 'contacts',
   initialState: initialState,
-  reducers: {
-
-  },
+  reducers: {},
   selectors: {
-    selectContacts: state => state.contacts,
-    selectFetchLoading: state => state.fetchLoading,
-    selectCreateLoading: state => state.createLoading,
-    selectDeleteLoading: state => state.deleteLoading,
-    selectUpdateLoading: state => state.updateLoading,
+    selectContacts: (state) => state.contacts,
+    selectFetchLoading: (state) => state.fetchLoading,
+    selectCreateLoading: (state) => state.createLoading,
+    selectDeleteLoading: (state) => state.deleteLoading,
+    selectUpdateLoading: (state) => state.updateLoading,
   },
   extraReducers: (builder) => {
     builder
       .addCase(submitContact.pending, (state) => {
         state.createLoading = true;
       })
-      .addCase(submitContact.fulfilled, state => {
+      .addCase(submitContact.fulfilled, (state) => {
         state.createLoading = false;
       });
     builder
-      .addCase(fetchContacts.pending, state => {
+      .addCase(fetchContacts.pending, (state) => {
         state.fetchLoading = true;
       })
       .addCase(fetchContacts.fulfilled, (state, { payload }) => {
@@ -51,14 +53,14 @@ export const contactsSlice = createSlice({
       .addCase(deleteContactThunk.pending, (state) => {
         state.deleteLoading = true;
       })
-      .addCase(deleteContactThunk.fulfilled, state => {
+      .addCase(deleteContactThunk.fulfilled, (state) => {
         state.deleteLoading = false;
-      })
+      });
   },
 });
 
 export const contactsReducer = contactsSlice.reducer;
-export const {} = contactsSlice.actions
+export const {} = contactsSlice.actions;
 export const {
   selectContacts,
   selectDeleteLoading,

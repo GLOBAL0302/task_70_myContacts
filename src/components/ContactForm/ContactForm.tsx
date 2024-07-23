@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { IUserInput } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { editContactThunk, submitContact } from '../../store/contactsThunks';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { selectContacts } from '../../store/contactsSlice';
 
 let initialState: IUserInput = {
@@ -16,22 +16,22 @@ let initialState: IUserInput = {
 };
 
 const ContactForm = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(selectContacts);
-  const {id:userId} = useParams();
-  if(userId){
-    const selectedContact = contacts.find(item=>item.id === userId);
-     if(selectedContact){
-       initialState = {
-         name : selectedContact.name,
-         phone : selectedContact.phone,
-         email : selectedContact.email,
-         photo: selectedContact.photo,
-       };
-     }
+  const { id: userId } = useParams();
+  if (userId) {
+    const selectedContact = contacts.find((item) => item.id === userId);
+    if (selectedContact) {
+      initialState = {
+        name: selectedContact.name,
+        phone: selectedContact.phone,
+        email: selectedContact.email,
+        photo: selectedContact.photo,
+      };
+    }
   }
   const [contactForm, setContactForm] = useState<IUserInput>(initialState);
-
 
   const onChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -46,13 +46,15 @@ const ContactForm = () => {
   const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      if(userId){
-        await dispatch(editContactThunk({...contactForm, id:userId}))
-      }else{
-        await dispatch(submitContact(contactForm))
+      if (userId) {
+        await dispatch(editContactThunk({ ...contactForm, id: userId }));
+      } else {
+        await dispatch(submitContact(contactForm));
       }
-    }catch (e){
-      console.log("The mistake is ", e);
+    } catch (e) {
+      console.log('The mistake is ', e);
+    } finally {
+      navigate('/');
     }
   };
 
@@ -64,11 +66,11 @@ const ContactForm = () => {
         component="form"
         direction="column"
         gap={2}
-        sx={{ bgcolor: 'text.disabled', padding:2}}
+        sx={{ bgcolor: 'text.disabled', padding: 2 }}
       >
         <Grid>
           <Typography variant="h5" component="h3">
-            {userId? "Edit Contact" : "Add New Contact"}
+            {userId ? 'Edit Contact' : 'Add New Contact'}
           </Typography>
           <hr />
         </Grid>
@@ -136,13 +138,17 @@ const ContactForm = () => {
           </Typography>
           <img
             style={{ maxHeight: '200px', maxWidth: '200px' }}
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfHDhRGTty4JUK8TuWxxrGMdy7awUBC4LY0w&s"
+            src={`${contactForm.photo}`}
             alt=""
           />
         </Grid>
         <Grid item className="ms-auto d-flex gap-5">
-          <Button type="submit" color={userId? "warning": "success"} variant="contained">
-            {userId? "Save Changes": "Create Contact"}
+          <Button
+            type="submit"
+            color={userId ? 'warning' : 'success'}
+            variant="contained"
+          >
+            {userId ? 'Save Changes' : 'Create Contact'}
           </Button>
           <Button type="button" color="inherit" variant="contained">
             Back to Contacts
