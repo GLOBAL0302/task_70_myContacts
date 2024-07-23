@@ -1,7 +1,14 @@
-import { Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material';
 import BadgeIcon from '@mui/icons-material/Badge';
 import { AlternateEmail, CameraAlt, LocalPhone } from '@mui/icons-material';
-import {useState } from 'react';
+import { useState } from 'react';
 import { IUserInput } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { editContactThunk, submitContact } from '../../store/contactsThunks';
@@ -42,7 +49,6 @@ const ContactForm = () => {
       [name]: value,
     }));
   };
-
 
   const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -151,12 +157,15 @@ const ContactForm = () => {
             color={userId ? 'warning' : 'success'}
             variant="contained"
           >
-            {createLoading && <CircularProgress color="inherit"/>}
+            {createLoading && <CircularProgress color="inherit" />}
             {userId ? 'Save Changes' : 'Create Contact'}
           </Button>
           <Button
-            onClick={()=> navigate("/")}
-            type="button" color="inherit" variant="contained">
+            onClick={() => navigate('/')}
+            type="button"
+            color="inherit"
+            variant="contained"
+          >
             Back to Contacts
           </Button>
         </Grid>

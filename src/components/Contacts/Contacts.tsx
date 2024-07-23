@@ -9,15 +9,15 @@ import { useParams } from 'react-router-dom';
 
 const Contacts = () => {
   const dispatch = useAppDispatch();
-  const fetchLoading = useAppSelector(selectFetchLoading)
+  const fetchLoading = useAppSelector(selectFetchLoading);
   const { id } = useParams();
   const contacts = useAppSelector(selectContacts);
   useEffect(() => {
-     try {
-       dispatch(fetchContacts());
-     }catch (e){
-       throw e;
-     }
+    try {
+      dispatch(fetchContacts());
+    } catch (e) {
+      throw e;
+    }
   }, [dispatch, id]);
 
   return (

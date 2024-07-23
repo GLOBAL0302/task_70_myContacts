@@ -1,8 +1,10 @@
 import { TransitionProps } from '@mui/material/transitions';
+import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 import {
   Box,
-  Button, CircularProgress,
+  Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,14 +20,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { deleteContactThunk } from '../../store/contactsThunks';
 import { selectContacts, selectDeleteLoading } from '../../store/contactsSlice';
 
-
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
   },
   ref: React.Ref<unknown>,
 ) {
-  return <Slide direction="down" ref={ref} {...props}/>;
+  return <Slide direction="down" ref={ref} {...props} />;
 });
 
 const ContactModal: React.FC = () => {
@@ -37,7 +38,6 @@ const ContactModal: React.FC = () => {
   );
   const deleteLoading = useAppSelector(selectDeleteLoading);
 
-
   const handleClose = () => {
     navigate('/');
   };
@@ -45,16 +45,15 @@ const ContactModal: React.FC = () => {
   const editContact = () => {
     navigate(`/editForm/${id}`);
   };
-  console.log(deleteLoading);
 
   const deleteContact = async () => {
     try {
       if (id) {
         await dispatch(deleteContactThunk(id));
       }
-    }catch (error){
+    } catch (error) {
       throw error;
-    }finally {
+    } finally {
       navigate('/');
     }
   };
@@ -68,7 +67,21 @@ const ContactModal: React.FC = () => {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{'Contact Information'}</DialogTitle>
+        <Box
+          component="div"
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}
+        >
+          <DialogTitle>{'Contact Information'}</DialogTitle>
+          <CloseIcon
+            onClick={() => {
+              navigate('/');
+            }}
+          />
+        </Box>
         <hr />
         <DialogContent className="px-5 py-0">
           <Box component="div" className="d-flex gap-5 align-items-center">
