@@ -3,10 +3,12 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import { AlternateEmail, CameraAlt, LocalPhone } from '@mui/icons-material';
 import { useState } from 'react';
 import { IUserInput } from '../../types';
-import { useAppDispatch } from '../../app/hooks';
-import { submitContact } from '../../store/contactsThunks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { editContactThunk, submitContact } from '../../store/contactsThunks';
+import { useParams } from 'react-router-dom';
+import { selectContacts } from '../../store/contactsSlice';
 
-const initialState: IUserInput = {
+let initialState: IUserInput = {
   name: '',
   phone: '',
   email: '',
@@ -15,8 +17,21 @@ const initialState: IUserInput = {
 
 const ContactForm = () => {
   const dispatch = useAppDispatch();
-
+  const contacts = useAppSelector(selectContacts);
+  const {id:userId} = useParams();
+  if(userId){
+    const selectedContact = contacts.find(item=>item.id === userId);
+     if(selectedContact){
+       initialState = {
+         name : selectedContact.name,
+         phone : selectedContact.phone,
+         email : selectedContact.email,
+         photo: selectedContact.photo,
+       };
+     }
+  }
   const [contactForm, setContactForm] = useState<IUserInput>(initialState);
+
 
   const onChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -31,7 +46,11 @@ const ContactForm = () => {
   const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await dispatch(submitContact(contactForm))
+      if(userId){
+        await dispatch(editContactThunk({...contactForm, id:userId}))
+      }else{
+        await dispatch(submitContact(contactForm))
+      }
     }catch (e){
       console.log("The mistake is ", e);
     }
@@ -45,11 +64,11 @@ const ContactForm = () => {
         component="form"
         direction="column"
         gap={2}
-        sx={{ bgcolor: 'text.disabled', padding: 4 }}
+        sx={{ bgcolor: 'text.disabled', padding:2}}
       >
         <Grid>
           <Typography variant="h5" component="h3">
-            Add new contacts
+            {userId? "Edit Contact" : "Add New Contact"}
           </Typography>
           <hr />
         </Grid>
@@ -57,6 +76,7 @@ const ContactForm = () => {
           <Box component="div" className="d-flex align-items-center">
             <BadgeIcon className="me-3" />
             <TextField
+              value={contactForm.name}
               fullWidth
               required
               onChange={onChange}
@@ -71,6 +91,7 @@ const ContactForm = () => {
           <Box component="div" className="d-flex align-items-center">
             <LocalPhone className="me-3" />
             <TextField
+              value={contactForm.phone}
               fullWidth
               required
               onChange={onChange}
@@ -85,6 +106,7 @@ const ContactForm = () => {
           <Box component="div" className="d-flex align-items-center">
             <AlternateEmail className="me-3" />
             <TextField
+              value={contactForm.email}
               fullWidth
               required
               onChange={onChange}
@@ -119,10 +141,10 @@ const ContactForm = () => {
           />
         </Grid>
         <Grid item className="ms-auto d-flex gap-5">
-          <Button type="submit" color="success" variant="contained">
-            Add New Contact
+          <Button type="submit" color={userId? "warning": "success"} variant="contained">
+            {userId? "Save Changes": "Create Contact"}
           </Button>
-          <Button type="button" color="primary" variant="contained">
+          <Button type="button" color="inherit" variant="contained">
             Back to Contacts
           </Button>
         </Grid>

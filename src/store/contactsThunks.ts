@@ -23,3 +23,23 @@ export const submitContact = createAsyncThunk<void,IUserInput,{}>(
     await axiosApi.post("/contacts.json", createdContact)
   }
 )
+
+export const deleteContactThunk = createAsyncThunk<void, string, {}>(
+  "contacts/deleteContact",
+  async(id)=>{
+    await axiosApi.delete(`contacts/${id}.json`);
+  }
+)
+
+export const editContactThunk = createAsyncThunk<void, IContactState, {}>(
+  "contacts/editContact",
+  async(contact:IContactState)=>{
+    const newContactData = {
+      name:contact.name,
+      phone:contact.phone,
+      email:contact.email,
+      photo:contact.photo,
+    };
+    await axiosApi.put(`contacts/${contact.id}.json`, newContactData)
+  }
+)

@@ -12,7 +12,10 @@ import {
 } from '@mui/material';
 import BadgeIcon from '@mui/icons-material/Badge';
 import { AlternateEmail, LocalPhone } from '@mui/icons-material';
-
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useNavigate, useParams } from 'react-router-dom';
+import { deleteContactThunk } from '../../store/contactsThunks';
+import { selectContacts } from '../../store/contactsSlice';
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
@@ -22,25 +25,32 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ContactModal = () => {
-
-  const [open, setOpen] = React.useState(true);
-
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
+const ContactModal:React.FC = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch()
+  const {id} = useParams();
+  const selectedContact = useAppSelector(selectContacts).find((contact) => contact.id === id);
 
   const handleClose = () => {
-    setOpen(false);
+    navigate("/")
   };
+
+  const editContact= ()=>{
+    navigate(`/editForm/${id}`)
+  }
+
+  const deleteContact= async ()=>{
+    if(id){
+      await dispatch(deleteContactThunk(id))
+    }
+    navigate("/")
+  }
+
 
   return (
     <div>
-      {/*<Button variant="outlined" onClick={handleClickOpen}>*/}
-      {/*  Slide in alert dialog*/}
-      {/*</Button>*/}
       <Dialog
-        open={open}
+        open={true}
         TransitionComponent={Transition}
         keepMounted
         onClose={handleClose}
@@ -58,28 +68,27 @@ const ContactModal = () => {
               <Grid item sx={{display: 'flex', justifyContent: 'space-between'}}>
                 <BadgeIcon className="me-3" />
                 <DialogContentText id="alert-dialog-slide-description">
-                  name
+                  {selectedContact && selectedContact.name}
                 </DialogContentText>
               </Grid>
               <Grid item sx={{display: 'flex', justifyContent: 'space-between'}}>
                 <LocalPhone className="me-3" />
                 <DialogContentText id="alert-dialog-slide-description">
-                  phone
+                  {selectedContact && selectedContact.phone}
                 </DialogContentText>
               </Grid>
               <Grid item sx={{display: 'flex', justifyContent: 'space-between'}}>
                 <AlternateEmail className="me-3" />
                 <DialogContentText id="alert-dialog-slide-description">
-                  Email
+                  {selectedContact && selectedContact.email}
                 </DialogContentText>
               </Grid>
             </Grid>
           </Box>
-
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Edit</Button>
-          <Button onClick={handleClose}>Delete</Button>
+          <Button variant="outlined" onClick={()=>editContact()} color="success">Edit</Button>
+          <Button variant="outlined"  color="error" onClick={()=>deleteContact()}>Delete</Button>
         </DialogActions>
       </Dialog>
     </div>
