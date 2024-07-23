@@ -11,7 +11,6 @@ export interface IContactsState {
   fetchLoading: boolean;
   createLoading: boolean;
   deleteLoading: boolean;
-  updateLoading: boolean;
 }
 
 const initialState: IContactsState = {
@@ -19,7 +18,6 @@ const initialState: IContactsState = {
   fetchLoading: false,
   createLoading: false,
   deleteLoading: false,
-  updateLoading: false,
 };
 
 export const contactsSlice = createSlice({
@@ -31,7 +29,6 @@ export const contactsSlice = createSlice({
     selectFetchLoading: (state) => state.fetchLoading,
     selectCreateLoading: (state) => state.createLoading,
     selectDeleteLoading: (state) => state.deleteLoading,
-    selectUpdateLoading: (state) => state.updateLoading,
   },
   extraReducers: (builder) => {
     builder
@@ -66,5 +63,4 @@ export const {
   selectDeleteLoading,
   selectCreateLoading,
   selectFetchLoading,
-  selectUpdateLoading,
 } = contactsSlice.selectors;

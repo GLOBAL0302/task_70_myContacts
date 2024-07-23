@@ -2,7 +2,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import React from 'react';
 import {
   Box,
-  Button,
+  Button, CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,14 +16,16 @@ import { AlternateEmail, LocalPhone } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deleteContactThunk } from '../../store/contactsThunks';
-import { selectContacts } from '../../store/contactsSlice';
+import { selectContacts, selectDeleteLoading } from '../../store/contactsSlice';
+
+
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
   },
   ref: React.Ref<unknown>,
 ) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="down" ref={ref} {...props}/>;
 });
 
 const ContactModal: React.FC = () => {
@@ -33,6 +35,8 @@ const ContactModal: React.FC = () => {
   const selectedContact = useAppSelector(selectContacts).find(
     (contact) => contact.id === id,
   );
+  const deleteLoading = useAppSelector(selectDeleteLoading);
+
 
   const handleClose = () => {
     navigate('/');
@@ -41,12 +45,18 @@ const ContactModal: React.FC = () => {
   const editContact = () => {
     navigate(`/editForm/${id}`);
   };
+  console.log(deleteLoading);
 
   const deleteContact = async () => {
-    if (id) {
-      await dispatch(deleteContactThunk(id));
+    try {
+      if (id) {
+        await dispatch(deleteContactThunk(id));
+      }
+    }catch (error){
+      throw error;
+    }finally {
+      navigate('/');
     }
-    navigate('/');
   };
 
   return (
@@ -108,11 +118,12 @@ const ContactModal: React.FC = () => {
             Edit
           </Button>
           <Button
+            disabled={deleteLoading}
             variant="outlined"
             color="error"
             onClick={() => deleteContact()}
           >
-            Delete
+            {deleteLoading && <CircularProgress color="error" />}Delete
           </Button>
         </DialogActions>
       </Dialog>

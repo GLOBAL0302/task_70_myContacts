@@ -1,28 +1,28 @@
-import { Box, Button, Grid, TextField, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
 import BadgeIcon from '@mui/icons-material/Badge';
 import { AlternateEmail, CameraAlt, LocalPhone } from '@mui/icons-material';
-import { useState } from 'react';
+import {useState } from 'react';
 import { IUserInput } from '../../types';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { editContactThunk, submitContact } from '../../store/contactsThunks';
 import { useNavigate, useParams } from 'react-router-dom';
-import { selectContacts } from '../../store/contactsSlice';
-
-let initialState: IUserInput = {
-  name: '',
-  phone: '',
-  email: '',
-  photo: '',
-};
+import { selectContacts, selectCreateLoading } from '../../store/contactsSlice';
 
 const ContactForm = () => {
+  let initialState: IUserInput = {
+    name: '',
+    phone: '',
+    email: '',
+    photo: '',
+  };
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(selectContacts);
+  const createLoading = useAppSelector(selectCreateLoading);
   const { id: userId } = useParams();
   if (userId) {
     const selectedContact = contacts.find((item) => item.id === userId);
-    if (selectedContact) {
+    if (selectedContact && userId) {
       initialState = {
         name: selectedContact.name,
         phone: selectedContact.phone,
@@ -43,8 +43,10 @@ const ContactForm = () => {
     }));
   };
 
+
   const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     try {
       if (userId) {
         await dispatch(editContactThunk({ ...contactForm, id: userId }));
@@ -144,13 +146,17 @@ const ContactForm = () => {
         </Grid>
         <Grid item className="ms-auto d-flex gap-5">
           <Button
+            disabled={createLoading}
             type="submit"
             color={userId ? 'warning' : 'success'}
             variant="contained"
           >
+            {createLoading && <CircularProgress color="inherit"/>}
             {userId ? 'Save Changes' : 'Create Contact'}
           </Button>
-          <Button type="button" color="inherit" variant="contained">
+          <Button
+            onClick={()=> navigate("/")}
+            type="button" color="inherit" variant="contained">
             Back to Contacts
           </Button>
         </Grid>
